@@ -1,1 +1,24 @@
+[#quickstart-mlm-lifecycle]
+= Lifecycle Management with SUSE Multi-Linux Manager and Edge Upgrade Controller
+
+If you need to manage very large fleets of edge clusters, we recommend to use the following solution blueprint:
+
+* Edge nodes are initially installed using images that were created with Edge Image Builder
+* During installation, the Edge nodes are registered to Multi-Linux Manager
+* Each Edge node runs an instance of the Edge Upgrade Controller
+* Multi-Linux Manager automates updates and upgrades by assigning [FIXME] Upgrade Plans [/FIXME] to a managed node. The Edge Upgrade Controller picks up changes and orchestrates the update or upgrade process on the Edge node or a multi-node Edge cluster.
+
+ [FIXME] Image goes here [/FIXME]
+
+== Prerequisites
+
+First, follow all steps in <<quickstart-suma>> to prepare a working Multi-Linux Manager environment.
+
+The image you build with Edge Image Builder needs to get modified to contain the following additional components:
+
+* Kubernetes (RKE2) needs to get installed
+* The Edge Upgrade controller container needs to get deployed on Kubernetes
+
+  [FIXME] example EIB YAML [/FIXME]
+
 
