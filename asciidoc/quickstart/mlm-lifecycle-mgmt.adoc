@@ -19,6 +19,115 @@ The image you build with Edge Image Builder needs to get modified to contain the
 * Kubernetes (RKE2) needs to get installed
 * The Edge Upgrade controller container needs to get deployed on Kubernetes
 
-  [FIXME] example EIB YAML [/FIXME]
+Use this YAML template to build an EIB image that contains all necessary parts:
+
+  [FIXME]This is k3s because I couldn't get RKE2 networking right[/FIXME]
+
+[,yaml]
+----
+apiVersion: 1.3
+image:
+  imageType: iso
+  arch: x86_64
+  baseImage: slemicro.iso
+  outputImageName: eib-image.iso
+operatingSystem:
+  users:
+  - username: root
+    createHomeDir: true
+    encryptedPassword: $6$aaBTHyqDRUMY1HAp$pmBY7.qLtoVlCGj32XR/Ogei4cngc3f4OX7fwBD/gw7HWyuNBOKYbBWnJ4pvrYwH2WUtJLKMbinVtBhMDHQIY0
+  keymap: de
+  systemd:
+    enable:
+      - cockpit.socket
+  packages:
+    noGPGCheck: true
+  suma:
+    host: ${fully qualified hostname of your SUSE Multi-Linux Manager Server}
+    activationKey: 1-edge_stable_x86_64
+kubernetes:
+  version: v1.33.3+k3s1
+  manifests:
+    urls:
+      - https://k8s.io/examples/application/nginx-app.yaml
+  helm:
+    charts:
+      - name: upgrade-controller
+        createNamespace: true
+        installationNamespace: kube-system
+        repositoryName: upgrade-controller-chart
+        targetNamespace: upgrade-controller-system
+        version: 304.0.1+up0.1.1
+      - name: cert-manager
+        repositoryName: jetstack
+        targetNamespace: cert-manager
+        valuesFile: certmanager.yaml
+        version: v1.18.1
+        createNamespace: true
+        installationNamespace: kube-system
+      - name: system-upgrade-controller
+        createNamespace: true
+        installationNamespace: kube-system
+        repositoryName: rancher-charts
+        targetNamespace: cattle-system
+        version: 107.0.0
+    repositories:
+      - name: upgrade-controller-chart
+        url: oci://registry.suse.com/edge/charts/
+      - name: jetstack
+        plainHTTP: false
+        skipTLSVerify: true
+        url: https://charts.jetstack.io
+      - name: rancher-charts
+        url: https://charts.rancher.io/
+----
+
+You also need to create an additional directory and provide values for the helm charts:
+[,shell]
+----
+mkdir -p /opt/eib/kubernetes/helm/values
+----
+In that folder, you need to create two files:
+
+certmanager.yaml
+
+[,yaml]
+----
+installCRDs: true
+----
+
+system-upgrade-controller.yaml
+
+[,yaml]
+----
+global:
+  cattle:
+    psp:
+      enabled: false
+----
+
+
+Once you've deployed the image and accepted its key on the MLM server, you can check whether everything is fine from the MLM server's console. As root, switch to the terminal session within the MLM container:
+
+[,shell]
+----
+mgrctl term
+----
+
+Check, whether you can reach the managed node and upgrade controller is running:
+
+  [FIXME]kubectl call is different on RKE2![/FIXME]
+
+[,shell]
+----
+salt '{minion ID of your node}' cmd.run --module-executors=[direct_call] '/opt/bin/kubectl get pods -A'
+----
+
+This will verify that you can reach the managed node ("Salt Minion") from Salt, and that kubectl is set up correctly to be executed by Salt.
+
+The "--module-executors=[direct_call]" part of the call switches off the transactional update handling in Salt and run the command directly. If you don't specify this, the call will also succeed, but take significantly longer.
+
+The result should be a list of all pods running, and it should include "upgrade-controller-system".
+
 
 
