@@ -55,6 +55,8 @@ include::../quickstart/eib.adoc[leveloffset=+1]
 
 include::../quickstart/suse-multilinux-manager.adoc[leveloffset=+1]
 
+include::../quickstart/mlm-lifecycle-mgmt.adoc[leveloffset=+1]
+
 //--------------------------------------------
 // Components
 //--------------------------------------------
