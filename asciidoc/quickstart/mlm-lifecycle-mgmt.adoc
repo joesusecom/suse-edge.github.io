@@ -22,6 +22,8 @@ The image you build with Edge Image Builder needs to get modified to contain the
 Use this YAML template to build an EIB image that contains all necessary parts:
 
   [FIXME]This is k3s because I couldn't get RKE2 networking right[/FIXME]
+  [FIXME]Currently using the openSUSE Leap Micro 16 images to avoid SE Linux issues on 6.1. Using a latest KIWI-built image should also work[/FIXME]
+
 
 [,yaml]
 ----
