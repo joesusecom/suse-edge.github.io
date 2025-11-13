@@ -49,6 +49,9 @@
 :version-nvidia-device-plugin: 0.14.5
 :version-kiwi-builder: 10.2.12.0
 
+// == Nessie ==
+:version-nessie: 1.0.0
+
 // == Non-Release Manifest Charts ==
 :version-suc-chart: 107.0.0
 :version-upgrade-controller-chart: 304.0.1+up0.1.1
@@ -97,6 +100,10 @@
 :version-sriov-network-operator-chart: 304.0.2+up1.5.0
 :version-sriov-upstream: 1.5.0
 
+// capi-provider-metal3
+// edu, Oct 9, 2025 :: Used to link the CRDs on the docs site like
+// https://doc.crds.dev/github.com/metal3-io/cluster-api-provider-metal3/infrastructure.cluster.x-k8s.io/Metal3MachineTemplate/v1beta1@v1.11.0#spec-template-spec-hostSelector-matchLabels
+:version-capi-provider-metal3: v1beta1@v1.10.2
 
 // ============================================================================
 // Manual Version Entries
